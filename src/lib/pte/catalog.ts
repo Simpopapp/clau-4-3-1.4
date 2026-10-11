@@ -3,6 +3,7 @@
 
 import { getMeta } from "./manifest";
 import {
+  DEFAULT_PROMPTS,
   SECTION_META,
   SECTION_ORDER,
   TYPE_META,
