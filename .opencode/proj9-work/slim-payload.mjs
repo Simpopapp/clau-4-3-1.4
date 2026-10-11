@@ -39,8 +39,9 @@ const FILES = [
 const norm = (s) => String(s ?? "").replace(/\s+/g, " ").trim();
 const eq = (a, b) => norm(a) === norm(b) && norm(a).length > 0;
 
-// ---------- 1. prompt modal (não vazio) por arquivo ----------
+// ---------- 1. prompt modal (não vazio) por arquivo + quantas vezes aparece ----------
 const modalPrompt = new Map();
+const modalCount = new Map();
 for (const file of FILES) {
   const list = getList(file);
   const counts = new Map();
@@ -51,6 +52,7 @@ for (const file of FILES) {
   }
   const best = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
   modalPrompt.set(file, best ? best[0] : "");
+  modalCount.set(file, best ? best[1] : 0);
 }
 
 function getList(file) {
