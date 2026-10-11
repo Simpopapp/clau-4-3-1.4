@@ -5,6 +5,7 @@ import {
   addSessionRecord,
   clearSessionDraft,
   getSessionDraft,
+  getStateSnapshot,
   saveSessionDraft,
   type SessionKind,
   type SessionResult,
@@ -90,18 +91,41 @@ export interface QueueOptions {
   mode?: "smart" | "errors" | "due";
   /** Restringe a fila a estes task types. */
   taskTypes?: TaskType[];
+  /** D4: só fontes verificadas (padrão das sessões vem dos Ajustes). */
+  verifiedOnly?: boolean;
   now?: number;
   rand?: Rand;
 }
 
-function poolFor(taskTypes?: TaskType[]): QuestionMeta[] {
-  return taskTypes?.length ? readyMeta.filter((m) => taskTypes.includes(m.taskType)) : readyMeta;
+/**
+ * Pool de treino: quase-duplicatas saem sempre (C3 — não treinar duas vezes);
+ * com `verifiedOnly`, só fontes com curadoria (D4).
+ */
+export function filterQueuePool(
+  pool: QuestionMeta[],
+  verifiedOnly?: boolean,
+): QuestionMeta[] {
+  return pool.filter((m) => !m.duplicate && (!verifiedOnly || m.sourceClass === "verificada"));
+}
+
+function poolFor(taskTypes?: TaskType[], verifiedOnly?: boolean): QuestionMeta[] {
+  const base = filterQueuePool(readyMeta, verifiedOnly);
+  return taskTypes?.length ? base.filter((m) => taskTypes.includes(m.taskType)) : base;
+}
+
+/** Filtro "só verificadas" corrente (Ajustes) — lido na hora de montar a fila. */
+function currentVerifiedOnly(): boolean {
+  return getStateSnapshot().settings.verifiedOnly;
 }
 
 /** Quantas questões estão vencidas para revisão (já tentadas e com `dueAt` no passado). */
-export function countDue(stats: Map<string, QuestionStat>, now = Date.now()): number {
+export function countDue(
+  stats: Map<string, QuestionStat>,
+  now = Date.now(),
+  verifiedOnly?: boolean,
+): number {
   let n = 0;
-  for (const m of readyMeta) {
+  for (const m of filterQueuePool(readyMeta, verifiedOnly)) {
     const s = stats.get(m.id);
     if (s && s.dueAt <= now) n++;
   }
@@ -112,9 +136,10 @@ export function countDue(stats: Map<string, QuestionStat>, now = Date.now()): nu
 export function countDueByType(
   stats: Map<string, QuestionStat>,
   now = Date.now(),
+  verifiedOnly?: boolean,
 ): Map<TaskType, number> {
   const out = new Map<TaskType, number>();
-  for (const m of readyMeta) {
+  for (const m of filterQueuePool(readyMeta, verifiedOnly)) {
     const s = stats.get(m.id);
     if (!s || s.dueAt > now) continue;
     out.set(m.taskType, (out.get(m.taskType) ?? 0) + 1);
@@ -123,9 +148,12 @@ export function countDueByType(
 }
 
 /** Quantas questões têm a última tentativa abaixo de ERROR_SCORE. */
-export function countErrors(stats: Map<string, QuestionStat>): number {
+export function countErrors(
+  stats: Map<string, QuestionStat>,
+  verifiedOnly?: boolean,
+): number {
   let n = 0;
-  for (const m of readyMeta) {
+  for (const m of filterQueuePool(readyMeta, verifiedOnly)) {
     const s = stats.get(m.id);
     if (s && (s.lastScore ?? 100) < ERROR_SCORE) n++;
   }
