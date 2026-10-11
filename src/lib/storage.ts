@@ -730,7 +730,7 @@ export function migrateLegacyState(parsed: unknown): AppState {
       version: 6,
       srsRules: 2,
       attempts,
-      questions: normalizeSnapshots(obj["questions"]),
+      questions: canonicalizeQuestions(normalizeSnapshots(obj["questions"])),
       daily: pruneDaily(normalizeDaily(obj["daily"])),
       bookmarks,
       notes,
