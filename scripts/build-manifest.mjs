@@ -44,7 +44,15 @@ for (const [file, [taskType, section]] of Object.entries(FILES)) {
   const list = Array.isArray(json) ? json : (json.questions ?? []);
   for (const q of list) {
     const id = str(q.id);
-    const text = str(q.text) || str(q.content);
+    // Fase 5 (D2): arquivo enxuto guarda uma única cópia do texto — mesma cadeia
+    // de fallback do leitor (src/lib/pte/catalog.ts → baseOf).
+    const ANSWER_IS_TEXT = file === "wfd.json" || file === "repeat_sentence.json";
+    let text = str(q.text) || str(q.content);
+    if (!text && ANSWER_IS_TEXT) text = str(q.answer);
+    if (!text && file === "write_essay.json") text = str(q.prompt);
+    if (!text && file === "reorder_paragraphs.json" && Array.isArray(q.items)) {
+      text = q.items.map(str).filter(Boolean).join(" ");
+    }
     if (!id || !text) continue;
     const row = {
       id,
