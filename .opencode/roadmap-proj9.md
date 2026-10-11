@@ -25,9 +25,10 @@
 - [x] Gates: nenhuma tela mistura % com 10–90 · estado "confiança baixa" com poucos dados
   - Gates: vitest 324/324 (+25: `estimate.test.ts` novo; `readiness.test.ts` reescrito; goal/studyPlan/report/metrics-sync atualizados) · tsgo limpo · build OK · lint 0 erros (8 warnings pré-existentes) · Playwright 390×844: card "Estimativa por habilidade" com rótulo, "confiança baixa" com poucos dados, nenhuma linha mistura alvo com %, console limpo. Pesos 20/40/27/13 derivados da matriz oficial (`skillMatrix.ts`, 22 linhas — PRD §6); `EXAM_WEIGHTS` removido.
 ## Fase 5 — Banco: proveniência, duplicatas, payload
-- [ ] Proveniência (verificada/comunitária/gerada por IA/seed) com selo, filtro "só verificadas" e peso na prontidão
-- [ ] Dedupe fuzzy em todos os tipos (28 pares de SWT) com `canonicalId` que funde progresso; remover campos redundantes (WFD ≈ 51%); selo "banco pequeno" (≤ 6 itens)
-- [ ] Gates: zero quase-duplicatas · progresso migrado sem perda · bundles medidos antes/depois
+- [x] Proveniência (verificada/comunitária/ia) com selo em listas e prática, filtro "só verificadas" (Ajustes; default desligado — D4 revisado, WFD/RS não têm itens verificados) e peso 0,7 para IA na prontidão
+- [x] Dedupe em todos os tipos (28 pares de SWT) com `canonicalIdOf` fundindo progresso/estatística/SRS; payload slim (wfd: só id/answer/source/word_count; texto derivado no catálogo); selo "banco pequeno" (≤ 6 itens)
+- [x] Gates: zero quase-duplicatas · progresso migrado sem perda · bundles medidos antes/depois
+  - Gates: vitest 338/338 (+14 em `fase5-banco.test.ts`: classificação de fonte, 28 pares canônicos, `mergeSnapshots` sem perda, migração v6 fundindo questions/bookmarks/notes, filtro nas filas SRS/plano/simulado, contrato do wfd.json, derivação de texto no catálogo) · tsgo limpo · build OK · lint 0 erros (8 warnings pré-existentes) · Playwright 390×844: selos verificada/IA/repetida visíveis na lista e na prática, toggle das fontes em Ajustes, console limpo. Payload: 3.583 KB → 1.612 KB (−55%); chunk wfd 166–174 KB pós-slim.
 ## Fase 6 — Offline real
 - [ ] Pré-cache gerado no build + "Baixar para offline" por seção/tipo com progresso; cache versionado e aviso de nova versão; descrição do manifest derivada do banco
 - [ ] Gates: Playwright offline passa em tipo nunca visitado após o download · atualização do SW testada

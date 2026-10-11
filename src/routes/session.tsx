@@ -56,8 +56,8 @@ function SessionPage() {
   const session = useSession();
   const [size, setSize] = useState(10);
   const stats = useMemo(() => computeStats(app), [app]);
-  const dueN = countDue(stats);
-  const errN = countErrors(stats);
+  const dueN = countDue(stats, Date.now(), app.settings.verifiedOnly);
+  const errN = countErrors(stats, app.settings.verifiedOnly);
   const [mix, setMix] = useState<MixCounts>({ read_aloud: 3, wfd: 5, repeat_sentence: 3 });
   const mixTotal = Object.values(mix).reduce((a, b) => a + (b ?? 0), 0);
 

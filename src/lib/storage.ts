@@ -16,6 +16,7 @@
 import { useSyncExternalStore } from "react";
 
 import { dayKey, lastDayKeys, shiftDayKey } from "@/lib/dates";
+import { canonicalIdOf } from "@/lib/pte/manifest";
 import type { TaskType } from "@/lib/pte/types";
 
 export type Accent = "en-AU" | "en-US" | "en-GB";
@@ -92,6 +93,9 @@ export interface Settings {
   lastBackupAt: number | null;
   /** 1º uso do microfone já explicado (aviso de privacidade do reconhecimento). */
   micNoticeSeen: boolean;
+  /** D4: filas só com fontes verificadas (Ajustes; desligado por padrão — WFD/RS
+   *  não têm fonte verificada; listas sempre mostram tudo, com selo). */
+  verifiedOnly: boolean;
   /** Pack studie-plus — desligado por padrão. */
   plus: PlusSettings;
 }
@@ -252,6 +256,7 @@ export const DEFAULT_SETTINGS: Settings = {
   targetScore: 65,
   lastBackupAt: null,
   micNoticeSeen: false,
+  verifiedOnly: false, // D4 revisado: WFD/RS não têm fonte verificada — ligar por padrão as tiraria da fila
   plus: { ...DEFAULT_PLUS },
 };
 
@@ -380,6 +385,75 @@ function replaySnapshots(attempts: Attempt[]): Record<string, QuestionSnapshot> 
   return questions;
 }
 
+// ---------- quase-duplicatas (Fase 5, C3) ----------
+
+const maxNullable = (a: number | null, b: number | null): number | null => {
+  if (a === null) return b;
+  if (b === null) return a;
+  return Math.max(a, b);
+};
+
+/**
+ * Funde dois snapshots da mesma questão canônica — zero perda:
+ * contadores somados, melhores = máximos, "última" = a tentativa mais recente,
+ * caixa/prazo = máximos (a caixa mais avançada sobrevive). Mesma semântica da
+ * mescla de backup (backup.ts).
+ */
+export function mergeSnapshots(a: QuestionSnapshot, b: QuestionSnapshot): QuestionSnapshot {
+  const newer = b.lastAttemptAt >= a.lastAttemptAt ? b : a;
+  return {
+    attempts: a.attempts + b.attempts,
+    bestScore: maxNullable(a.bestScore, b.bestScore),
+    bestWpm: maxNullable(a.bestWpm, b.bestWpm),
+    lastScore: newer.lastScore,
+    lastAttemptAt: Math.max(a.lastAttemptAt, b.lastAttemptAt),
+    strongAttempts: a.strongAttempts + b.strongAttempts,
+    dueStrongAttempts: a.dueStrongAttempts + b.dueStrongAttempts,
+    prevStrong: newer.prevStrong,
+    lastAttemptDue: newer.lastAttemptDue,
+    box: Math.max(a.box, b.box),
+    dueAt: Math.max(a.dueAt, b.dueAt),
+  };
+}
+
+/** Reindexa snapshots pelo id canônico, fundindo pares de quase-duplicatas (C3). */
+export function canonicalizeQuestions(
+  questions: Record<string, QuestionSnapshot>,
+): Record<string, QuestionSnapshot> {
+  const out: Record<string, QuestionSnapshot> = {};
+  for (const [qid, snap] of Object.entries(questions)) {
+    const cid = canonicalIdOf(qid);
+    const cur = out[cid];
+    out[cid] = cur ? mergeSnapshots(cur, snap) : snap;
+  }
+  return out;
+}
+
+/** Marcadores de livros sob ids canônicos, sem repetições. */
+function canonicalBookmarks(bookmarks: string[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const b of bookmarks) {
+    const cid = canonicalIdOf(b);
+    if (!seen.has(cid)) {
+      seen.add(cid);
+      out.push(cid);
+    }
+  }
+  return out;
+}
+
+/** Notas sob ids canônicos; em colisão vence a mais recente. */
+function canonicalNotes(notes: Record<string, QuestionNote>): Record<string, QuestionNote> {
+  const out: Record<string, QuestionNote> = {};
+  for (const [qid, note] of Object.entries(notes)) {
+    const cid = canonicalIdOf(qid);
+    const cur = out[cid];
+    if (!cur || note.updatedAt > cur.updatedAt) out[cid] = note;
+  }
+  return out;
+}
+
 /** Agregados diários a partir de um log completo. */
 function buildDailyFromAttempts(attempts: Attempt[]): Record<string, DailyAggregate> {
   const daily: Record<string, DailyAggregate> = {};
@@ -445,6 +519,7 @@ function normalizeSettings(raw: unknown): Settings {
     targetScore,
     lastBackupAt: typeof s.lastBackupAt === "number" ? s.lastBackupAt : null,
     micNoticeSeen: s.micNoticeSeen === true,
+    verifiedOnly: s.verifiedOnly === true,
     plus: normalizePlusSettings(s.plus),
   };
 }
@@ -602,7 +677,8 @@ function normalizeDaily(raw: unknown): Record<string, DailyAggregate> {
  *   inventado) e adota os contadores de due-gating do replay (conservador).
  */
 function recalcSrsSnapshots(app: AppState): AppState {
-  const replayed = replaySnapshots(app.attempts);
+  // Replay sob ids canônicos: pares de quase-duplicatas viram UMA série (C3).
+  const replayed = canonicalizeQuestions(replaySnapshots(app.attempts));
   const questions: Record<string, QuestionSnapshot> = {};
   for (const [qid, snap] of Object.entries(app.questions)) {
     const rep = replayed[qid];
@@ -644,10 +720,10 @@ export function migrateLegacyState(parsed: unknown): AppState {
   const attempts = (Array.isArray(obj["attempts"]) ? obj["attempts"] : [])
     .map((a) => normalizeAttempt(a))
     .filter((a): a is Attempt => a !== null);
-  const bookmarks = (Array.isArray(obj["bookmarks"]) ? obj["bookmarks"] : []).filter(
-    (b) => typeof b === "string",
+  const bookmarks = canonicalBookmarks(
+    (Array.isArray(obj["bookmarks"]) ? obj["bookmarks"] : []).filter((b) => typeof b === "string"),
   );
-  const notes = normalizeNotes(obj["notes"]);
+  const notes = canonicalNotes(normalizeNotes(obj["notes"]));
   const sessions = normalizeSessions(obj["sessions"]);
   const draft =
     (v === 3 || v === 4 || v === 5 || v === 6) && obj["draft"] !== undefined
@@ -659,7 +735,7 @@ export function migrateLegacyState(parsed: unknown): AppState {
       version: 6,
       srsRules: 2,
       attempts,
-      questions: normalizeSnapshots(obj["questions"]),
+      questions: canonicalizeQuestions(normalizeSnapshots(obj["questions"])),
       daily: pruneDaily(normalizeDaily(obj["daily"])),
       bookmarks,
       notes,
@@ -671,7 +747,7 @@ export function migrateLegacyState(parsed: unknown): AppState {
   }
 
   // Legado (v1–v5): semeia snapshot e agregados ANTES de cortar o log.
-  const questions = replaySnapshots(attempts);
+  const questions = canonicalizeQuestions(replaySnapshots(attempts));
   const daily = pruneDaily(buildDailyFromAttempts(attempts));
   return {
     version: 6,
@@ -939,9 +1015,11 @@ export function recordAttempt(
     durationMs: attempt.durationMs ?? 0,
   };
   // 1) Snapshot por questão (fonte de verdade — nunca derivado do log).
+  // Fase 5 (C3): a tentativa é contabilizada no id canônico da questão.
+  const cid = canonicalIdOf(entry.qid);
   const questions = {
     ...state.questions,
-    [entry.qid]: applyAttemptToSnapshot(state.questions[entry.qid], entry),
+    [cid]: applyAttemptToSnapshot(state.questions[cid], entry),
   };
   // 2) Agregado diário.
   const day = dayKey(entry.ts);
@@ -966,10 +1044,11 @@ export function recordAttempt(
 }
 
 export function toggleBookmark(qid: string) {
-  const has = state.bookmarks.includes(qid);
+  const cid = canonicalIdOf(qid);
+  const has = state.bookmarks.includes(cid);
   setState({
     ...state,
-    bookmarks: has ? state.bookmarks.filter((id) => id !== qid) : [...state.bookmarks, qid],
+    bookmarks: has ? state.bookmarks.filter((id) => id !== cid) : [...state.bookmarks, cid],
   });
 }
 
@@ -1014,16 +1093,17 @@ export function addSessionRecord(record: Omit<SessionRecord, "id"> & { id?: stri
 
 /** Cria/atualiza a nota de uma questão; texto vazio apaga a nota. */
 export function upsertNote(qid: string, text: string) {
+  const cid = canonicalIdOf(qid);
   const clean = text.trim().slice(0, 2000);
   const next = { ...state.notes };
   if (!clean) {
-    if (qid in next) {
-      delete next[qid];
+    if (cid in next) {
+      delete next[cid];
       setState({ ...state, notes: next });
     }
     return;
   }
-  next[qid] = { text: clean, updatedAt: Date.now() };
+  next[cid] = { text: clean, updatedAt: Date.now() };
   setState({ ...state, notes: next });
 }
 
@@ -1104,7 +1184,10 @@ function scoreOf(a: Attempt): number | null {
  */
 export function computeStats(app: AppState): Map<string, QuestionStat> {
   const map = new Map<string, QuestionStat>();
-  for (const [qid, snap] of Object.entries(app.questions ?? {})) {
+  // Fase 5 (C3): estatísticas sob o id canônico — pares de quase-duplicatas
+  // somam no mesmo lugar (nada se divide entre dois qids).
+  const questions = canonicalizeQuestions(app.questions ?? {});
+  for (const [qid, snap] of Object.entries(questions)) {
     map.set(qid, snapshotToStat(snap));
   }
   const ordered = [...app.attempts].sort((x, y) => x.ts - y.ts);
@@ -1113,14 +1196,15 @@ export function computeStats(app: AppState): Map<string, QuestionStat> {
   const pending = new Map<string, Attempt[]>();
   for (const a of ordered) {
     if (scoreOf(a) === null) continue;
-    const snap = app.questions?.[a.qid];
+    const cid = canonicalIdOf(a.qid);
+    const snap = questions[cid];
     if (snap && a.ts <= snap.lastAttemptAt) continue; // já contabilizada
-    const list = pending.get(a.qid) ?? [];
+    const list = pending.get(cid) ?? [];
     list.push(a);
-    pending.set(a.qid, list);
+    pending.set(cid, list);
   }
   for (const [qid, list] of pending) {
-    const snap = covered.has(qid) ? app.questions[qid] : undefined;
+    const snap = covered.has(qid) ? questions[qid] : undefined;
     let cur = snap
       ? { ...snap }
       : {
@@ -1156,8 +1240,10 @@ export function computeTypeStats(app: AppState): Map<TaskType, TypeStat> {
       lastAttemptAt: 0,
     };
     const seen = seenByType.get(a.taskType) ?? new Set<string>();
-    const isNew = !seen.has(a.qid);
-    seen.add(a.qid);
+    // Fase 5 (C3): a mesma questão canônica tentada sob qids duplicados conta uma vez.
+    const cid = canonicalIdOf(a.qid);
+    const isNew = !seen.has(cid);
+    seen.add(cid);
     cur.attempts += 1;
     if (isNew) cur.attemptedIds += 1;
     cur.lastAttemptAt = Math.max(cur.lastAttemptAt, a.ts);

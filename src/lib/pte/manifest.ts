@@ -4,6 +4,7 @@
 // Gerado por `node scripts/build-manifest.mjs`.
 
 import manifestJson from "@/data/pte/manifest.json";
+import canonicalMapJson from "@/data/pte/canonical-map.json";
 import {
   SECTION_META,
   SECTION_ORDER,
@@ -13,6 +14,43 @@ import {
   type TaskType,
 } from "./types";
 
+// ---------- Proveniência (C2) ----------
+// Fontes com curadoria pública vs. comunidade vs. predições geradas por IA.
+export type SourceClass = "verificada" | "comunitária" | "ia";
+
+const VERIFIED_SOURCES = new Set([
+  "goarno.io",
+  "pteacademy.in",
+  "band9pte.com.au",
+  "stormedugo.com",
+  "edknot.com",
+  "79score.com",
+  "languageacademy.com.au",
+]);
+const AI_SOURCES = new Set(["ai-generated-prediction", "pte2-prediction", "pteracai-seed"]);
+
+export function sourceClass(source: string): SourceClass {
+  if (VERIFIED_SOURCES.has(source)) return "verificada";
+  if (AI_SOURCES.has(source)) return "ia";
+  return "comunitária"; // desconhecida ou anki-cards: nunca tratada como verificada
+}
+
+// ---------- Duplicatas (C3) ----------
+// `canonical-map.json` (gerado por .opencode/proj9-work/dedupe.mjs): qid → id canônico.
+// Duplicatas continuam no banco (selo "repetida") mas saem das filas de treino.
+const CANONICAL_MAP = new Map<string, string>(
+  Object.entries(canonicalMapJson as Record<string, string>),
+);
+
+export function canonicalIdOf(id: string): string {
+  return CANONICAL_MAP.get(id) ?? id;
+}
+
+export function isDuplicateId(id: string): boolean {
+  const c = CANONICAL_MAP.get(id);
+  return c !== undefined && c !== id;
+}
+
 export interface QuestionMeta {
   id: string;
   taskType: TaskType;
@@ -21,6 +59,12 @@ export interface QuestionMeta {
   source: string;
   wordCount: number;
   difficulty?: Difficulty;
+  /** Selo de proveniência (C2). */
+  sourceClass: SourceClass;
+  /** Id canônico do grupo de quase-duplicatas (C3) — o próprio id quando única. */
+  canonicalId: string;
+  /** True quando a questão é quase-duplicata de outra e sai das filas. */
+  duplicate: boolean;
 }
 
 interface RawRow {
@@ -40,6 +84,9 @@ export const allMeta: QuestionMeta[] = (manifestJson as RawRow[]).map((r) => ({
   topic: r.topic,
   source: r.src,
   wordCount: r.wc,
+  sourceClass: sourceClass(r.src),
+  canonicalId: canonicalIdOf(r.id),
+  duplicate: isDuplicateId(r.id),
   ...(r.d ? { difficulty: r.d } : {}),
 }));
 
@@ -120,6 +167,12 @@ export function positionInType(id: string): { number: number; total: number } {
 /** Primeira questão de cada task type (para os atalhos "praticar"). */
 export function firstIdOfType(taskType: TaskType): string | undefined {
   return byType.get(taskType)?.[0]?.id;
+}
+
+/** Selo "banco pequeno" (C4): tipo com ≤ 6 itens — treine, mas não confie na cobertura. */
+export const SMALL_BANK_MAX = 6;
+export function isSmallBank(taskType: TaskType): boolean {
+  return (typeCounts[taskType] ?? 0) <= SMALL_BANK_MAX;
 }
 
 export { SECTION_META, SECTION_ORDER, TYPE_META };

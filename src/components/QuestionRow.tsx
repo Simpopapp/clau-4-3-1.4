@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { TYPE_META, type QuestionMeta } from "@/lib/pte";
+import { TYPE_META, type QuestionMeta, type SourceClass } from "@/lib/pte";
 import { isMasteredStat, type QuestionStat } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,13 @@ interface QuestionRowProps {
 }
 
 const DIFFICULTY_LABEL = { easy: "fácil", medium: "média", hard: "difícil" } as const;
+
+/** Selo de proveniência (C2): verificada/comunitária/ia. */
+const SOURCE_BADGE: Record<SourceClass, string> = {
+  verificada: "verificada",
+  comunitária: "comunitária",
+  ia: "IA",
+};
 
 function statusOf(
   stat: QuestionStat | undefined,
@@ -65,6 +72,17 @@ export function QuestionRow({
         <span className="rounded-full bg-secondary px-2 py-0.5">
           {preview ? meta.topic : TYPE_META[meta.taskType].label}
         </span>
+        <span
+          className={cn(
+            "rounded-full px-2 py-0.5",
+            meta.sourceClass === "verificada" && "bg-primary/10 text-primary",
+          )}
+        >
+          {SOURCE_BADGE[meta.sourceClass]}
+        </span>
+        {meta.duplicate ? (
+          <span className="rounded-full bg-secondary px-2 py-0.5">repetida</span>
+        ) : null}
         <span>{meta.wordCount} palavras</span>
         {meta.difficulty ? <span>· {DIFFICULTY_LABEL[meta.difficulty]}</span> : null}
         <span>· {status.label}</span>

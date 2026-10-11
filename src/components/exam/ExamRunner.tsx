@@ -823,7 +823,10 @@ const fmtClock = (s: number) =>
 export function ExamRunner({ examId, onExit }: { examId: ExamId; onExit: () => void }) {
   const app = useAppState();
   const navigate = useNavigate();
-  const queue = useMemo(() => buildExamQueue(examId), [examId]);
+  const queue = useMemo(
+    () => buildExamQueue(examId, Math.random, { verifiedOnly: app.settings.verifiedOnly }),
+    [examId, app.settings.verifiedOnly],
+  );
   const [index, setIndex] = useState(0);
   const [question, setQuestion] = useState<UnifiedQuestion | null>(null);
   const [results, setResults] = useState<ExamResultRow[]>([]);
