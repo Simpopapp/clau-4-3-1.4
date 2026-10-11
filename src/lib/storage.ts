@@ -16,6 +16,7 @@
 import { useSyncExternalStore } from "react";
 
 import { dayKey, lastDayKeys, shiftDayKey } from "@/lib/dates";
+import { canonicalIdOf } from "@/lib/pte/manifest";
 import type { TaskType } from "@/lib/pte/types";
 
 export type Accent = "en-AU" | "en-US" | "en-GB";
