@@ -169,5 +169,11 @@ export function firstIdOfType(taskType: TaskType): string | undefined {
   return byType.get(taskType)?.[0]?.id;
 }
 
+/** Selo "banco pequeno" (C4): tipo com ≤ 6 itens — treine, mas não confie na cobertura. */
+export const SMALL_BANK_MAX = 6;
+export function isSmallBank(taskType: TaskType): boolean {
+  return (typeCounts[taskType] ?? 0) <= SMALL_BANK_MAX;
+}
+
 export { SECTION_META, SECTION_ORDER, TYPE_META };
 export type { Section, TaskType };
