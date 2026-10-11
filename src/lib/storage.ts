@@ -1039,10 +1039,11 @@ export function recordAttempt(
 }
 
 export function toggleBookmark(qid: string) {
-  const has = state.bookmarks.includes(qid);
+  const cid = canonicalIdOf(qid);
+  const has = state.bookmarks.includes(cid);
   setState({
     ...state,
-    bookmarks: has ? state.bookmarks.filter((id) => id !== qid) : [...state.bookmarks, qid],
+    bookmarks: has ? state.bookmarks.filter((id) => id !== cid) : [...state.bookmarks, cid],
   });
 }
 
