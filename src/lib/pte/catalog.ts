@@ -57,6 +57,24 @@ function parseArrayAnswer(raw: unknown): string[] {
   return [];
 }
 
+// Tipos cuja pergunta é falada (TTS): sem `audio_text`/`transcript` no JSON enxuto,
+// o áudio deriva do próprio texto exibido.
+const AUDIO_TYPES: ReadonlySet<TaskType> = new Set([
+  "read_aloud",
+  "repeat_sentence",
+  "retell_lecture",
+  "answer_short",
+  "wfd",
+  "lst_fib",
+  "summarize_spoken_text",
+  "lst_hiw",
+  "lst_hcs",
+  "lst_summary",
+  "lst_smw",
+  "lst_mcq",
+  "lst_mcq_multi",
+]) as ReadonlySet<TaskType>;
+
 function baseOf(
   q: Raw,
   taskType: TaskType,
@@ -73,8 +91,18 @@ function baseOf(
   difficulty?: Difficulty;
   examFrequency?: number;
 } {
-  const rawText = str(q["text"]) || str(q["content"]);
-  const text = taskType === "read_aloud" ? rawText.replace(/\s+/g, " ").trim() : rawText;
+  // Fase 5 (D2): arquivo enxuto guarda UMA cópia do texto — derivar o resto aqui.
+  // Mesma cadeia de fallback que scripts/build-manifest.mjs.
+  let text = str(q["text"]) || str(q["content"]);
+  if (!text && (taskType === "wfd" || taskType === "repeat_sentence")) text = str(q["answer"]);
+  if (!text && taskType === "write_essay") text = str(q["prompt"]);
+  if (!text && taskType === "reorder_paragraphs" && Array.isArray(q["items"])) {
+    text = q["items"].map((s: unknown) => str(s)).filter(Boolean).join(" ");
+  }
+  text = taskType === "read_aloud" ? text.replace(/\s+/g, " ").trim() : text;
+  const needsAudio = AUDIO_TYPES.has(taskType);
+  const transcript = str(q["transcript"]) || (needsAudio ? str(q["audio_text"]) || text : "");
+  const audioText = str(q["audio_text"]) || (needsAudio ? transcript : "");
   const difficulty = ["easy", "medium", "hard"].includes(str(q["difficulty"]))
     ? (str(q["difficulty"]) as Difficulty)
     : undefined;
@@ -82,10 +110,10 @@ function baseOf(
   return {
     id: str(q["id"]),
     section: TYPE_META[taskType].section,
-    prompt: str(q["prompt"]),
+    prompt: str(q["prompt"]) || DEFAULT_PROMPTS[taskType],
     text,
-    audioText: str(q["audio_text"]),
-    transcript: str(q["transcript"]) || str(q["audio_text"]),
+    audioText,
+    transcript,
     wordCount: num(q["word_count"]) ?? tokenize(text).length,
     topic: str(q["topic"]) || "sem tópico",
     source: str(q["source"]),
