@@ -346,7 +346,21 @@ CLIs relevantes em `/bin` (quando presentes): `lovable`, `lovable-skills`,
     confiança pelo n do snapshot (n < 10 → "confiança baixa"); cobertura e
     variedade só REDUZEM o índice (teto 10 pontos); IA/seed pesa 0,7 (D4).
     n/cobertura vêm do SNAPSHOT (app.questions), nunca do log truncado.
-- Fase 5 (banco: proveniência, duplicatas, payload) é a próxima pendência.
+- Projeto 9, Fase 5 concluída (banco: proveniência, duplicatas, payload): regras:
+  - Fonte de cada questão vem de `src/lib/pte/manifest.ts` (`sourceClass()`; classes
+    verificada/comunitária/ia). Selos em `QuestionRow` e `PracticeShell`; selo
+    "banco pequeno" (≤ 6 itens) via `isSmallBank` em `SectionPage`.
+  - Duplicatas via `src/data/pte/canonical-map.json` + `canonicalIdOf`/`isDuplicateId`;
+    o progresso (estatística, SRS, bookmarks, notas) vive SEMPRE sob o id canônico —
+    `canonicalizeQuestions` funde snapshots com `mergeSnapshots` (zero perda). NUNCA
+    criar estado por qid de duplicata nem voltar a gerar quase-duplicatas.
+  - Filtro "só fontes verificadas" (`settings.verifiedOnly`, default desligado — D4
+    revisado) afeta as filas de treino: SRS/plano (`poolFor` em `session.ts`/`studyPlan.ts`)
+    e simulado (`buildExamQueue`). Listas NUNCA filtram por fonte, só rotulam.
+  - Payload slim: wfd.json guarda só id/answer/source/word_count; o catálogo deriva
+    text/transcript/audioText (wfd: da answer; essay: do prompt). NUNCA voltar a
+    duplicar campos de texto no JSON.
+- Fase 6 (offline real) é a próxima pendência.
 
 ### 6.1 Dependências conhecidas que NÃO existem neste template
 
