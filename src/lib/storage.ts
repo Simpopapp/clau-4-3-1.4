@@ -1088,16 +1088,17 @@ export function addSessionRecord(record: Omit<SessionRecord, "id"> & { id?: stri
 
 /** Cria/atualiza a nota de uma questão; texto vazio apaga a nota. */
 export function upsertNote(qid: string, text: string) {
+  const cid = canonicalIdOf(qid);
   const clean = text.trim().slice(0, 2000);
   const next = { ...state.notes };
   if (!clean) {
-    if (qid in next) {
-      delete next[qid];
+    if (cid in next) {
+      delete next[cid];
       setState({ ...state, notes: next });
     }
     return;
   }
-  next[qid] = { text: clean, updatedAt: Date.now() };
+  next[cid] = { text: clean, updatedAt: Date.now() };
   setState({ ...state, notes: next });
 }
 
