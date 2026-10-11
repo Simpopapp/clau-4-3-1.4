@@ -4,7 +4,14 @@ import { useNavigate } from "@tanstack/react-router";
 import { TopNav } from "@/components/TopNav";
 import { MicNotice } from "@/components/MicNotice";
 import { Button } from "@/components/ui/button";
-import { TYPE_META, type QuestionMeta, type UnifiedQuestion } from "@/lib/pte";
+import {
+  TYPE_META,
+  isDuplicateId,
+  sourceClass,
+  type QuestionMeta,
+  type SourceClass,
+  type UnifiedQuestion,
+} from "@/lib/pte";
 import {
   completeSessionItem,
   isSessionItem,
@@ -255,6 +262,25 @@ export function PracticeShell({
               <span className="text-muted-foreground">/ {pool.length}</span>
             </span>
             <span className="rounded-full bg-secondary px-2.5 py-0.5">{question.topic}</span>
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-0.5",
+                sourceClass(question.source) === "verificada"
+                  ? "bg-primary/10 text-primary"
+                  : "bg-secondary text-muted-foreground",
+              )}
+            >
+              {(
+                {
+                  verificada: "verificada",
+                  comunitária: "comunitária",
+                  ia: "IA",
+                } satisfies Record<SourceClass, string>
+              )[sourceClass(question.source)]}
+            </span>
+            {isDuplicateId(question.id) ? (
+              <span className="rounded-full bg-secondary px-2.5 py-0.5">repetida</span>
+            ) : null}
             <span>{question.wordCount} palavras</span>
             {dueLabel ? (
               <span
