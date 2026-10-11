@@ -131,7 +131,7 @@ function slimItem(file, q, defaults) {
     "difficulty",
     "exam_frequency",
   ]) {
-    if (k === "prompt" || k === "text" || k === "transcript" || k === "audio_text") continue;
+    if (k === "text" || k === "transcript" || k === "audio_text") continue;
     keep(k);
   }
   // transcript/audio_text vazios somem; os reais ficam (lst_fib).
