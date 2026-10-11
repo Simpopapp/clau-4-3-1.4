@@ -1010,9 +1010,11 @@ export function recordAttempt(
     durationMs: attempt.durationMs ?? 0,
   };
   // 1) Snapshot por questão (fonte de verdade — nunca derivado do log).
+  // Fase 5 (C3): a tentativa é contabilizada no id canônico da questão.
+  const cid = canonicalIdOf(entry.qid);
   const questions = {
     ...state.questions,
-    [entry.qid]: applyAttemptToSnapshot(state.questions[entry.qid], entry),
+    [cid]: applyAttemptToSnapshot(state.questions[cid], entry),
   };
   // 2) Agregado diário.
   const day = dayKey(entry.ts);
