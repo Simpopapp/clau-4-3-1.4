@@ -152,9 +152,8 @@ describe("Dedupe / canonicalId (C3)", () => {
   });
 
   it("tentativa numa duplicata é contabilizada no id canônico (stats sem divisão)", async () => {
-    const { migrateLegacyState, recordAttempt, computeStats, getStateSnapshot } = await import(
-      "@/lib/storage"
-    );
+    const { migrateLegacyState, recordAttempt, computeStats, getStateSnapshot } =
+      await import("@/lib/storage");
     const now = Date.now();
     const migrated = migrateLegacyState({ version: 6, srsRules: 2, settings: {} });
     recordAttempt({
@@ -191,9 +190,9 @@ describe("Filas respeitam duplicatas e o filtro de fontes (D4/D7)", () => {
     const queue = buildQueue(new Map(), 40, { verifiedOnly: true, rand: () => 0.5 });
     const meta = new Map(allMeta.map((m) => [m.id, m]));
     expect(queue.length).toBeGreaterThan(0);
-    expect(queue.every((id) => !meta.get(id)!.duplicate && meta.get(id)!.sourceClass === "verificada")).toBe(
-      true,
-    );
+    expect(
+      queue.every((id) => !meta.get(id)!.duplicate && meta.get(id)!.sourceClass === "verificada"),
+    ).toBe(true);
   });
 
   it("buildExamQueue com verifiedOnly só amostra fontes verificadas", async () => {

@@ -87,7 +87,11 @@ function largestRemainderSplit(
   return out;
 }
 
-function stocksOf(stats: Map<string, QuestionStat>, now: number, verifiedOnly?: boolean): TypeStock[] {
+function stocksOf(
+  stats: Map<string, QuestionStat>,
+  now: number,
+  verifiedOnly?: boolean,
+): TypeStock[] {
   const agg = new Map<
     TaskType,
     { section: Section; due: number; untried: number; sum: number; n: number }

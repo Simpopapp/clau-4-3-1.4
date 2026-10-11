@@ -270,13 +270,15 @@ export function PracticeShell({
                   : "bg-secondary text-muted-foreground",
               )}
             >
-              {(
-                {
-                  verificada: "verificada",
-                  comunitária: "comunitária",
-                  ia: "IA",
-                } satisfies Record<SourceClass, string>
-              )[sourceClass(question.source)]}
+              {
+                (
+                  {
+                    verificada: "verificada",
+                    comunitária: "comunitária",
+                    ia: "IA",
+                  } satisfies Record<SourceClass, string>
+                )[sourceClass(question.source)]
+              }
             </span>
             {isDuplicateId(question.id) ? (
               <span className="rounded-full bg-secondary px-2.5 py-0.5">repetida</span>

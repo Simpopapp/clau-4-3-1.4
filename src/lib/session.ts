@@ -101,10 +101,7 @@ export interface QueueOptions {
  * Pool de treino: quase-duplicatas saem sempre (C3 — não treinar duas vezes);
  * com `verifiedOnly`, só fontes com curadoria (D4).
  */
-export function filterQueuePool(
-  pool: QuestionMeta[],
-  verifiedOnly?: boolean,
-): QuestionMeta[] {
+export function filterQueuePool(pool: QuestionMeta[], verifiedOnly?: boolean): QuestionMeta[] {
   return pool.filter((m) => !m.duplicate && (!verifiedOnly || m.sourceClass === "verificada"));
 }
 
@@ -148,10 +145,7 @@ export function countDueByType(
 }
 
 /** Quantas questões têm a última tentativa abaixo de ERROR_SCORE. */
-export function countErrors(
-  stats: Map<string, QuestionStat>,
-  verifiedOnly?: boolean,
-): number {
+export function countErrors(stats: Map<string, QuestionStat>, verifiedOnly?: boolean): number {
   let n = 0;
   for (const m of filterQueuePool(readyMeta, verifiedOnly)) {
     const s = stats.get(m.id);
@@ -320,12 +314,20 @@ export function startSession(size: number, stats: Map<string, QuestionStat>, opt
 
 export function startMixedSession(counts: MixCounts, stats: Map<string, QuestionStat>) {
   const total = Object.values(counts).reduce((a, b) => a + (b ?? 0), 0);
-  begin(buildMixedQueue(stats, counts, poolFor(undefined, currentVerifiedOnly())), "mixed", `Mista de ${total}`);
+  begin(
+    buildMixedQueue(stats, counts, poolFor(undefined, currentVerifiedOnly())),
+    "mixed",
+    `Mista de ${total}`,
+  );
 }
 
 /** Fila do dia: só revisões vencidas, pior último score primeiro. */
 export function startDueSession(size: number, stats: Map<string, QuestionStat>) {
-  begin(buildQueue(stats, size, { mode: "due", verifiedOnly: currentVerifiedOnly() }), "due", `Fila do dia (${size})`);
+  begin(
+    buildQueue(stats, size, { mode: "due", verifiedOnly: currentVerifiedOnly() }),
+    "due",
+    `Fila do dia (${size})`,
+  );
 }
 
 export function isSessionItem(qid: string): boolean {
