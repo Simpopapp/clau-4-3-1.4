@@ -192,6 +192,7 @@
     {
       "text": "Today I want to talk about the history of vaccination. The first widely-used vaccine was developed by Edward Jenner in 1796, when he observed that milkmaids who had caught a mild disease called cowpox seemed immune to the deadly smallpox. He took material from a cowpox sore and inoculated a young boy, who then proved resistant to smallpox exposure. While Jenner's method would not pass modern ethical review, it laid the foundation for immunology as a science. Today, vaccines work through several mechanisms: some use weakened viruses, some use only fragments of viral proteins, and the most recent generation uses messenger RNA to instruct cells to produce a target protein. Vaccination has been one of the most successful public health interventions in history, having eliminated smallpox entirely and brought several other diseases close to eradication.",
       "id": "pte-retell-5d96daeb",
+      "prompt": "Listen to the lecture (or read it), then re-tell it in 40 seconds. Use a template: 'The lecturer discussed... He/She explained... Furthermore... To conclude...'",
       "answer": "",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Scoring: content, fluency, pronunciation. Partial recall with strong structure scores better than full recall with hesitation.",
       "topic": "history of medicine",
@@ -201,6 +202,7 @@
     {
       "text": "I'm going to discuss the concept of carbon sinks today. A carbon sink is any natural reservoir that absorbs more carbon dioxide than it releases. The world's two largest carbon sinks are the oceans, which absorb about a quarter of all human-produced CO2 each year, and forests, particularly tropical rainforests. When trees photosynthesize, they pull carbon out of the atmosphere and store it in their wood, leaves, and roots. This is why deforestation is a double threat to climate stability: not only does it release stored carbon when trees are burned or decompose, but it also removes the future absorption capacity those trees would have provided. Protecting and restoring forests is therefore one of the most cost-effective strategies in the global response to climate change.",
       "id": "pte-retell-822c81af",
+      "prompt": "Listen to the lecture (or read it), then re-tell it in 40 seconds. Use a template: 'The lecturer discussed... He/She explained... Furthermore... To conclude...'",
       "answer": "",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Scoring: content, fluency, pronunciation. Partial recall with strong structure scores better than full recall with hesitation.",
       "topic": "environmental science",
@@ -210,6 +212,7 @@
     {
       "text": "In this lecture we'll examine cognitive dissonance, a concept introduced by Leon Festinger in the 1950s. Cognitive dissonance occurs when a person holds two conflicting beliefs simultaneously, or when their behavior contradicts a stated belief. The mental discomfort this creates motivates people to reduce the dissonance, usually by changing one of the conflicting beliefs rather than changing their behavior. This explains many puzzling human behaviors: why people who make difficult choices become more certain that they chose correctly after the fact, why members of cults become more committed when prophecies fail, and why people often justify minor unethical actions rather than acknowledge them. Understanding cognitive dissonance helps explain why simply presenting people with contradictory evidence rarely changes their minds, especially on emotionally invested topics.",
       "id": "pte-retell-1dc61663",
+      "prompt": "Listen to the lecture (or read it), then re-tell it in 40 seconds. Use a template: 'The lecturer discussed... He/She explained... Furthermore... To conclude...'",
       "answer": "",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Scoring: content, fluency, pronunciation. Partial recall with strong structure scores better than full recall with hesitation.",
       "topic": "psychology",
@@ -219,6 +222,7 @@
     {
       "text": "Today's lecture covers the concept of opportunity cost, which is fundamental to economic thinking. The opportunity cost of any choice is the value of the next best alternative you give up. For example, if you choose to spend an hour studying economics instead of working at a paying job, the opportunity cost is the wages you would have earned in that hour. Opportunity cost is often invisible because it's about what you don't see — the path not taken. But ignoring opportunity costs leads to bad decisions. Governments that invest heavily in one program forgo the benefits that other programs could have produced. Companies that pursue one product line cannot simultaneously pursue another. The discipline of asking 'what else could we be doing with these resources?' is at the heart of economic analysis.",
       "id": "pte-retell-58e09fe8",
+      "prompt": "Listen to the lecture (or read it), then re-tell it in 40 seconds. Use a template: 'The lecturer discussed... He/She explained... Furthermore... To conclude...'",
       "answer": "",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Scoring: content, fluency, pronunciation. Partial recall with strong structure scores better than full recall with hesitation.",
       "topic": "economics",

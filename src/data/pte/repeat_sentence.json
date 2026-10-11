@@ -2935,6 +2935,7 @@
     },
     {
       "id": "pte-rs-766c14c8",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "The professor's lecture on quantum mechanics was unexpectedly accessible to first-year students.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2943,6 +2944,7 @@
     },
     {
       "id": "pte-rs-cdb78780",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "Most undergraduate programs require students to complete a substantial research project before graduation.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2951,6 +2953,7 @@
     },
     {
       "id": "pte-rs-1f12756e",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "The library will remain closed throughout the winter break for essential maintenance work.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2959,6 +2962,7 @@
     },
     {
       "id": "pte-rs-e609cb27",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "Climate scientists agree that global temperatures will continue to rise without intervention.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2967,6 +2971,7 @@
     },
     {
       "id": "pte-rs-3f39fbca",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "Successful entrepreneurs often credit their teams more than their own individual contributions.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2975,6 +2980,7 @@
     },
     {
       "id": "pte-rs-5b9cff76",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "Modern medicine has dramatically extended life expectancy in most parts of the world.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2983,6 +2989,7 @@
     },
     {
       "id": "pte-rs-ab8e3d2c",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "The university recently received a substantial grant to expand its research facilities.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2991,6 +2998,7 @@
     },
     {
       "id": "pte-rs-cd1602cc",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "Students should consult their academic advisor before changing their declared major.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -2999,6 +3007,7 @@
     },
     {
       "id": "pte-rs-63e3eba4",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "Research suggests that regular exercise can significantly improve cognitive performance.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
@@ -3007,6 +3016,7 @@
     },
     {
       "id": "pte-rs-2abe4a4b",
+      "prompt": "Listen to the sentence and repeat it exactly. Match the rhythm and intonation, not just the words.",
       "answer": "Public transportation systems require sustained investment to remain efficient and reliable.",
       "grading_notes": "Dual-scored on LISTENING and SPEAKING. Components: content (% of words matched), oral fluency, pronunciation. Transcript matching here scores content; live exam adds fluency and pronunciation.",
       "topic": "academic sentence",
