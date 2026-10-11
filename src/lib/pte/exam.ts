@@ -109,14 +109,22 @@ function shuffle<T>(list: T[], rand: Rand): T[] {
 }
 
 /** Fila do simulado: amostra estratificada por bloco (respeita o estoque de cada tipo). */
-export function buildExamQueue(examId: ExamId, rand: Rand = Math.random): string[] {
+export function buildExamQueue(
+  examId: ExamId,
+  rand: Rand = Math.random,
+  opts: { verifiedOnly?: boolean } = {},
+): string[] {
   const out: string[] = [];
   for (const block of EXAM_PLAN[examId]!) {
-    const pool = metaByType(block.taskType);
-    if (pool.length === 0) continue;
-    const take = Math.min(block.count, pool.length);
+    // Fase 5 (D4/C3): mesmo pool das filas — sem quase-duplicatas; com o filtro
+    // dos Ajustes ligado, só fontes verificadas.
+    const base = metaByType(block.taskType).filter(
+      (m) => !m.duplicate && (!opts.verifiedOnly || m.sourceClass === "verificada"),
+    );
+    if (base.length === 0) continue;
+    const take = Math.min(block.count, base.length);
     out.push(
-      ...shuffle(pool, rand)
+      ...shuffle(base, rand)
         .slice(0, take)
         .map((m) => m.id),
     );

@@ -126,7 +126,7 @@ function stocksOf(stats: Map<string, QuestionStat>, now: number, verifiedOnly?: 
  * estoque disponível (vencidas + não tentadas por tipo).
  */
 export function buildDailyPlan(
-  app: Pick<AppState, "attempts"> & { settings: { dailyGoal: number } },
+  app: Pick<AppState, "attempts"> & { settings: { dailyGoal: number; verifiedOnly?: boolean } },
   stats: Map<string, QuestionStat>,
   now = Date.now(),
 ): DailyPlan {
@@ -140,7 +140,7 @@ export function buildDailyPlan(
   const goal = app.settings.dailyGoal;
   if (typeof goal !== "number" || !Number.isFinite(goal) || goal < MIN_PLAN_SIZE) return empty;
 
-  const stocks = stocksOf(stats, now);
+  const stocks = stocksOf(stats, now, app.settings.verifiedOnly);
   const sectionTypes = new Map<Section, TypeStock[]>();
   for (const s of stocks) {
     const list = sectionTypes.get(s.section) ?? [];
