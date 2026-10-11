@@ -153,18 +153,19 @@ let before = 0;
 let after = 0;
 for (const file of FILES) {
   const path = join(DIR, file);
+  const sizeBefore = statSync(path).size;
   const raw = JSON.parse(readFileSync(path, "utf8"));
   const list = Array.isArray(raw) ? raw : (raw.questions ?? []);
-  before += statSync(path).size;
+  before += sizeBefore;
   const slimmed = list.map((q) => slimItem(file, q));
   const out = Array.isArray(raw) ? slimmed : { ...raw, questions: slimmed };
   const payload = JSON.stringify(out, null, 2) + "\n";
   after += Buffer.byteLength(payload);
   writeFileSync(path, payload);
   const modal = modalPrompt.get(file);
-  if (modal) defaults[file.replace(".json", "")] = modal;
+  if (modal && modalCount.get(file) >= 5) defaults[file.replace(".json", "")] = modal;
   console.log(
-    `${file}: ${list.length} itens · ${Math.round(statSync(path).size / 1024)} KB → ${Math.round(Buffer.byteLength(payload) / 1024)} KB`,
+    `${file}: ${list.length} itens · ${Math.round(sizeBefore / 1024)} KB → ${Math.round(Buffer.byteLength(payload) / 1024)} KB`,
   );
 }
 writeFileSync(join(ROOT, ".opencode/proj9-work/default-prompts.json"), JSON.stringify(defaults, null, 2) + "\n");
