@@ -1179,7 +1179,10 @@ function scoreOf(a: Attempt): number | null {
  */
 export function computeStats(app: AppState): Map<string, QuestionStat> {
   const map = new Map<string, QuestionStat>();
-  for (const [qid, snap] of Object.entries(app.questions ?? {})) {
+  // Fase 5 (C3): estatísticas sob o id canônico — pares de quase-duplicatas
+  // somam no mesmo lugar (nada se divide entre dois qids).
+  const questions = canonicalizeQuestions(app.questions ?? {});
+  for (const [qid, snap] of Object.entries(questions)) {
     map.set(qid, snapshotToStat(snap));
   }
   const ordered = [...app.attempts].sort((x, y) => x.ts - y.ts);
@@ -1188,14 +1191,15 @@ export function computeStats(app: AppState): Map<string, QuestionStat> {
   const pending = new Map<string, Attempt[]>();
   for (const a of ordered) {
     if (scoreOf(a) === null) continue;
-    const snap = app.questions?.[a.qid];
+    const cid = canonicalIdOf(a.qid);
+    const snap = questions[cid];
     if (snap && a.ts <= snap.lastAttemptAt) continue; // já contabilizada
-    const list = pending.get(a.qid) ?? [];
+    const list = pending.get(cid) ?? [];
     list.push(a);
-    pending.set(a.qid, list);
+    pending.set(cid, list);
   }
   for (const [qid, list] of pending) {
-    const snap = covered.has(qid) ? app.questions[qid] : undefined;
+    const snap = covered.has(qid) ? questions[qid] : undefined;
     let cur = snap
       ? { ...snap }
       : {
