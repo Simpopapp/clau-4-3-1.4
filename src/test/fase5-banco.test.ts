@@ -174,7 +174,8 @@ describe("Dedupe / canonicalId (C3)", () => {
 
 describe("Filas respeitam duplicatas e o filtro de fontes (D4/D7)", () => {
   it("filterQueuePool: duplicatas saem sempre; verifiedOnly deixa só verificadas", async () => {
-    const { filterQueuePool, allMeta } = await import("@/lib/session");
+    const { filterQueuePool } = await import("@/lib/session");
+    const { allMeta } = await import("@/lib/pte");
     const filtered = filterQueuePool(allMeta, true);
     expect(filtered.every((m) => !m.duplicate && m.sourceClass === "verificada")).toBe(true);
     const noFilter = filterQueuePool(allMeta, false);
