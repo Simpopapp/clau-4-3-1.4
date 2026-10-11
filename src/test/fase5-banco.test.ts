@@ -197,11 +197,8 @@ describe("Filas respeitam duplicatas e o filtro de fontes (D4/D7)", () => {
     const { buildExamQueue } = await import("@/lib/pte/exam");
     const { allMeta } = await import("@/lib/pte");
     const queue = buildExamQueue("listening", () => 0.5, { verifiedOnly: true });
-    const meta = new Map(allMeta.map((m) => [m.id, m]));
     // Listening NÃO tem fonte verificada: a fila fica vazia em vez de treinar IA
-    expect(queue.every((id) => !meta.get(id)!.duplicate && meta.get(id)!.sourceClass === "verificada")).toBe(
-      true,
-    );
+    expect(queue).toHaveLength(0);
   });
 
   it("o plano do dia respeita o filtro (verifiedOnly => sem estoque de tipos só-IA)", async () => {
