@@ -381,6 +381,75 @@ function replaySnapshots(attempts: Attempt[]): Record<string, QuestionSnapshot> 
   return questions;
 }
 
+// ---------- quase-duplicatas (Fase 5, C3) ----------
+
+const maxNullable = (a: number | null, b: number | null): number | null => {
+  if (a === null) return b;
+  if (b === null) return a;
+  return Math.max(a, b);
+};
+
+/**
+ * Funde dois snapshots da mesma questão canônica — zero perda:
+ * contadores somados, melhores = máximos, "última" = a tentativa mais recente,
+ * caixa/prazo = máximos (a caixa mais avançada sobrevive). Mesma semântica da
+ * mescla de backup (backup.ts).
+ */
+export function mergeSnapshots(a: QuestionSnapshot, b: QuestionSnapshot): QuestionSnapshot {
+  const newer = b.lastAttemptAt >= a.lastAttemptAt ? b : a;
+  return {
+    attempts: a.attempts + b.attempts,
+    bestScore: maxNullable(a.bestScore, b.bestScore),
+    bestWpm: maxNullable(a.bestWpm, b.bestWpm),
+    lastScore: newer.lastScore,
+    lastAttemptAt: Math.max(a.lastAttemptAt, b.lastAttemptAt),
+    strongAttempts: a.strongAttempts + b.strongAttempts,
+    dueStrongAttempts: a.dueStrongAttempts + b.dueStrongAttempts,
+    prevStrong: newer.prevStrong,
+    lastAttemptDue: newer.lastAttemptDue,
+    box: Math.max(a.box, b.box),
+    dueAt: Math.max(a.dueAt, b.dueAt),
+  };
+}
+
+/** Reindexa snapshots pelo id canônico, fundindo pares de quase-duplicatas (C3). */
+export function canonicalizeQuestions(
+  questions: Record<string, QuestionSnapshot>,
+): Record<string, QuestionSnapshot> {
+  const out: Record<string, QuestionSnapshot> = {};
+  for (const [qid, snap] of Object.entries(questions)) {
+    const cid = canonicalIdOf(qid);
+    const cur = out[cid];
+    out[cid] = cur ? mergeSnapshots(cur, snap) : snap;
+  }
+  return out;
+}
+
+/** Marcadores de livros sob ids canônicos, sem repetições. */
+function canonicalBookmarks(bookmarks: string[]): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const b of bookmarks) {
+    const cid = canonicalIdOf(b);
+    if (!seen.has(cid)) {
+      seen.add(cid);
+      out.push(cid);
+    }
+  }
+  return out;
+}
+
+/** Notas sob ids canônicos; em colisão vence a mais recente. */
+function canonicalNotes(notes: Record<string, QuestionNote>): Record<string, QuestionNote> {
+  const out: Record<string, QuestionNote> = {};
+  for (const [qid, note] of Object.entries(notes)) {
+    const cid = canonicalIdOf(qid);
+    const cur = out[cid];
+    if (!cur || note.updatedAt > cur.updatedAt) out[cid] = note;
+  }
+  return out;
+}
+
 /** Agregados diários a partir de um log completo. */
 function buildDailyFromAttempts(attempts: Attempt[]): Record<string, DailyAggregate> {
   const daily: Record<string, DailyAggregate> = {};
