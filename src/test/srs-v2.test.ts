@@ -226,7 +226,11 @@ describe("Fila do dia e plano usam o novo SRS", () => {
     const q = id("wfd");
     const stats = computeStats(stateWith([attempt(q, "wfd", 40, T0)]));
     expect(countDue(stats, T0 + 2 * MIN)).toBe(1);
-    const plan = buildDailyPlan({ ...emptyState(), attempts: [] }, stats, T0 + 2 * MIN);
+    const plan = buildDailyPlan(
+      { ...emptyState(), settings: { ...emptyState().settings, verifiedOnly: false }, attempts: [] },
+      stats,
+      T0 + 2 * MIN,
+    );
     expect(plan.dueCounts["wfd"]).toBeGreaterThan(0);
   });
 });
