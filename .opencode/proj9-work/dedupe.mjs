@@ -68,9 +68,7 @@ for (const [file, type] of Object.entries(FILES)) {
   const list = Array.isArray(json) ? json : (json.questions ?? []);
   for (const q of list) {
     if (!q?.id) continue;
-    const cmp = ANSWER_IS_TEXT.has(type)
-      ? (q.answer ?? q.text ?? "")
-      : (q.text ?? q.content ?? "");
+    const cmp = ANSWER_IS_TEXT.has(type) ? (q.answer ?? q.text ?? "") : (q.text ?? q.content ?? "");
     rows.push({ id: q.id, type, norm: normalize(cmp) });
   }
 }

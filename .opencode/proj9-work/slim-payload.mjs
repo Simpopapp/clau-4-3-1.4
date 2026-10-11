@@ -36,7 +36,10 @@ const FILES = [
   "lst_mcq_multi.json",
 ];
 
-const norm = (s) => String(s ?? "").replace(/\s+/g, " ").trim();
+const norm = (s) =>
+  String(s ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
 const eq = (a, b) => norm(a) === norm(b) && norm(a).length > 0;
 
 // ---------- 1. prompt modal (não vazio) por arquivo + quantas vezes aparece ----------
@@ -168,5 +171,10 @@ for (const file of FILES) {
     `${file}: ${list.length} itens · ${Math.round(sizeBefore / 1024)} KB → ${Math.round(Buffer.byteLength(payload) / 1024)} KB`,
   );
 }
-writeFileSync(join(ROOT, ".opencode/proj9-work/default-prompts.json"), JSON.stringify(defaults, null, 2) + "\n");
-console.log(`\nTotal: ${Math.round(before / 1024)} KB → ${Math.round(after / 1024)} KB (${Math.round((1 - after / before) * 100)}% menor)`);
+writeFileSync(
+  join(ROOT, ".opencode/proj9-work/default-prompts.json"),
+  JSON.stringify(defaults, null, 2) + "\n",
+);
+console.log(
+  `\nTotal: ${Math.round(before / 1024)} KB → ${Math.round(after / 1024)} KB (${Math.round((1 - after / before) * 100)}% menor)`,
+);

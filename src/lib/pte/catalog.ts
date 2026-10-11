@@ -98,7 +98,10 @@ function baseOf(
   if (!text && (taskType === "wfd" || taskType === "repeat_sentence")) text = str(q["answer"]);
   if (!text && taskType === "write_essay") text = str(q["prompt"]);
   if (!text && taskType === "reorder_paragraphs" && Array.isArray(q["items"])) {
-    text = q["items"].map((s: unknown) => str(s)).filter(Boolean).join(" ");
+    text = q["items"]
+      .map((s: unknown) => str(s))
+      .filter(Boolean)
+      .join(" ");
   }
   text = taskType === "read_aloud" ? text.replace(/\s+/g, " ").trim() : text;
   const needsAudio = AUDIO_TYPES.has(taskType);

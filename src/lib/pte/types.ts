@@ -63,7 +63,8 @@ export const DEFAULT_PROMPTS: Record<TaskType, string> = {
   write_essay: "",
   reorder_paragraphs: "Reordene os trechos para formar um parágrafo coerente.",
   read_fib: "Escolha a palavra correta para cada lacuna.",
-  mcq_single: "Read the text and answer the multiple-choice question by selecting one correct response.",
+  mcq_single:
+    "Read the text and answer the multiple-choice question by selecting one correct response.",
   mcq_multi:
     "Read the text and answer the question by selecting all correct responses. More than one is correct.",
   wfd: "You will hear a sentence. Type the sentence in the box below exactly as you hear it.",
