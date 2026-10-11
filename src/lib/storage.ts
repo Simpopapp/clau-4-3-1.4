@@ -742,7 +742,7 @@ export function migrateLegacyState(parsed: unknown): AppState {
   }
 
   // Legado (v1–v5): semeia snapshot e agregados ANTES de cortar o log.
-  const questions = replaySnapshots(attempts);
+  const questions = canonicalizeQuestions(replaySnapshots(attempts));
   const daily = pruneDaily(buildDailyFromAttempts(attempts));
   return {
     version: 6,
