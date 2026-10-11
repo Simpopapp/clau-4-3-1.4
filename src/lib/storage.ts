@@ -1235,8 +1235,10 @@ export function computeTypeStats(app: AppState): Map<TaskType, TypeStat> {
       lastAttemptAt: 0,
     };
     const seen = seenByType.get(a.taskType) ?? new Set<string>();
-    const isNew = !seen.has(a.qid);
-    seen.add(a.qid);
+    // Fase 5 (C3): a mesma questão canônica tentada sob qids duplicados conta uma vez.
+    const cid = canonicalIdOf(a.qid);
+    const isNew = !seen.has(cid);
+    seen.add(cid);
     cur.attempts += 1;
     if (isNew) cur.attemptedIds += 1;
     cur.lastAttemptAt = Math.max(cur.lastAttemptAt, a.ts);
