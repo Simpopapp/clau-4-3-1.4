@@ -35,7 +35,6 @@ const MAX_SECONDARY_PENALTY = 10;
 /** Ajuste máximo da tendência no índice (pontos). */
 const MAX_TREND_ADJUSTMENT = 5;
 
-
 export type ReadinessLevel = "Iniciando" | "Em progresso" | "Quase pronto" | "Pronto";
 
 /** Rótulo por faixa do índice (decisão D3). */
@@ -71,7 +70,8 @@ function scoredAttempts(app: Pick<AppState, "attempts">): ScoredAttempt[] {
       type: a.taskType,
       ts: a.ts,
       score: s,
-      weight: AI_SOURCES.has(source) ? AI_SOURCE_WEIGHT : 1,
+      // D4 (Fase 5): peso pela classe de fonte do manifesto (ia = 0,7).
+      weight: getMeta(a.qid)?.sourceClass === "ia" ? AI_SOURCE_WEIGHT : 1,
     });
   }
   return out;
