@@ -4,7 +4,14 @@ import { Link } from "@tanstack/react-router";
 import { QuestionRow } from "@/components/QuestionRow";
 import { TopNav } from "@/components/TopNav";
 import { Button } from "@/components/ui/button";
-import { SECTION_META, TYPE_META, firstIdOfType, loadQuestions, metaBySection } from "@/lib/pte";
+import {
+  SECTION_META,
+  TYPE_META,
+  firstIdOfType,
+  isSmallBank,
+  loadQuestions,
+  metaBySection,
+} from "@/lib/pte";
 import type { Section, TaskType } from "@/lib/pte/types";
 import { computeStats, computeTypeStats, toggleBookmark, useAppState } from "@/lib/storage";
 import { cn } from "@/lib/utils";
@@ -146,6 +153,14 @@ export function SectionPage({ section }: { section: Section }) {
                     >
                       {ready ? "praticar" : "em breve"}
                     </span>
+                    {isSmallBank(t) ? (
+                      <span
+                        title="Banco pequeno — treine, mas não confie na cobertura"
+                        className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
+                      >
+                        banco pequeno
+                      </span>
+                    ) : null}
                   </div>
                   <div className="mt-3 flex items-baseline gap-3 text-sm">
                     <span className="tabular-nums text-muted-foreground">{count} questões</span>
