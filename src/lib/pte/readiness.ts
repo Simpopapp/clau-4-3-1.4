@@ -35,7 +35,6 @@ const MAX_SECONDARY_PENALTY = 10;
 /** Ajuste máximo da tendência no índice (pontos). */
 const MAX_TREND_ADJUSTMENT = 5;
 
-const AI_SOURCES = new Set(["ai-generated-prediction", "pteracai-seed"]);
 
 export type ReadinessLevel = "Iniciando" | "Em progresso" | "Quase pronto" | "Pronto";
 
