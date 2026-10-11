@@ -71,7 +71,7 @@ export const DEFAULT_PROMPTS: Record<TaskType, string> = {
   summarize_spoken_text: "Listen to the lecture and write a summary of 50-70 words.",
   lst_hiw: "",
   lst_hcs: "",
-  lst_summary: "50-70 words, ~10 minutes. Capture main claim + key tension. Use a complex structure.",
+  lst_summary: "",
   lst_smw: "",
   lst_mcq: "",
   lst_mcq_multi: "",
