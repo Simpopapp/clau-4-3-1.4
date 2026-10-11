@@ -1,6 +1,8 @@
 // Fase 5 — Banco: proveniência, duplicatas, payload (PRD §3.5).
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { UnifiedQuestion } from "@/lib/pte";
+
 beforeEach(() => {
   window.localStorage.clear();
   vi.resetModules();
@@ -243,9 +245,10 @@ describe("Payload (D2) — contrato do leitor", () => {
   it("o catálogo deriva WFD (answer) e essay (prompt) sem campo de texto no JSON", async () => {
     const { loadQuestions } = await import("@/lib/pte");
     const [wfd] = await loadQuestions(["wfd"]);
-    expect(wfd!.text).toBe(wfd!.answer);
-    expect(wfd!.transcript).toBe(wfd!.answer);
-    expect(wfd!.audioText).toBe(wfd!.answer);
+    const w = wfd as Extract<UnifiedQuestion, { answer: string }> | undefined;
+    expect(w!.text).toBe(w!.answer);
+    expect(w!.transcript).toBe(w!.answer);
+    expect(w!.audioText).toBe(w!.answer);
     const [essay] = await loadQuestions(["write_essay"]);
     expect(essay!.text.length).toBeGreaterThan(50);
     expect(essay!.prompt.length).toBeGreaterThan(50);
