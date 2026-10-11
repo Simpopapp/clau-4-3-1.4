@@ -87,12 +87,17 @@ function largestRemainderSplit(
   return out;
 }
 
-function stocksOf(stats: Map<string, QuestionStat>, now: number): TypeStock[] {
+function stocksOf(stats: Map<string, QuestionStat>, now: number, verifiedOnly?: boolean): TypeStock[] {
   const agg = new Map<
     TaskType,
     { section: Section; due: number; untried: number; sum: number; n: number }
   >();
-  for (const m of allMeta) {
+  // Fase 5 (D4/C3): o plano usa o mesmo pool das filas — sem quase-duplicatas e,
+  // com "só verificadas" ligado, sem itens de IA/comunitários.
+  const pool = verifiedOnly
+    ? allMeta.filter((m) => !m.duplicate && m.sourceClass === "verificada")
+    : allMeta.filter((m) => !m.duplicate);
+  for (const m of pool) {
     if (!TYPE_META[m.taskType].ready) continue;
     const cur = agg.get(m.taskType) ?? { section: m.section, due: 0, untried: 0, sum: 0, n: 0 };
     const s = stats.get(m.id);
