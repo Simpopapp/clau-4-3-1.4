@@ -93,6 +93,8 @@ export interface Settings {
   lastBackupAt: number | null;
   /** 1º uso do microfone já explicado (aviso de privacidade do reconhecimento). */
   micNoticeSeen: boolean;
+  /** Fila SRS/plano/simulado só com fontes verificadas (D4; listas sempre mostram tudo). */
+  verifiedOnly: boolean;
   /** Pack studie-plus — desligado por padrão. */
   plus: PlusSettings;
 }
@@ -253,6 +255,7 @@ export const DEFAULT_SETTINGS: Settings = {
   targetScore: 65,
   lastBackupAt: null,
   micNoticeSeen: false,
+  verifiedOnly: true,
   plus: { ...DEFAULT_PLUS },
 };
 
@@ -515,6 +518,7 @@ function normalizeSettings(raw: unknown): Settings {
     targetScore,
     lastBackupAt: typeof s.lastBackupAt === "number" ? s.lastBackupAt : null,
     micNoticeSeen: s.micNoticeSeen === true,
+    verifiedOnly: s.verifiedOnly !== false,
     plus: normalizePlusSettings(s.plus),
   };
 }
