@@ -75,11 +75,13 @@ for (const [file, type] of Object.entries(FILES)) {
   }
 }
 
-// Bucket por prefixo de 200 chars dentro do mesmo tipo (evita O(n²) global).
+// Bucket por prefixo de 100 chars dentro do mesmo tipo (evita O(n²) global).
+// 100 chars: os pares conhecidos de SWT dividem o início e divergem depois.
+const PREFIX_LEN = 100;
 const buckets = new Map();
 for (const r of rows) {
   if (r.norm.length < 40) continue; // frases curtas demais: sem comparação confiável
-  const key = `${r.type}|${r.norm.slice(0, 200)}`;
+  const key = `${r.type}|${r.norm.slice(0, PREFIX_LEN)}`;
   const b = buckets.get(key) ?? [];
   b.push(r);
   buckets.set(key, b);
