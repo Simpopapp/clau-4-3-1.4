@@ -154,7 +154,7 @@ for (const file of FILES) {
   before += statSync(path).size;
   const slimmed = list.map((q) => slimItem(file, q));
   const out = Array.isArray(raw) ? slimmed : { ...raw, questions: slimmed };
-  const payload = JSON.stringify(out, null, 1) + "\n";
+  const payload = JSON.stringify(out, null, 2) + "\n";
   after += Buffer.byteLength(payload);
   writeFileSync(path, payload);
   const modal = modalPrompt.get(file);
