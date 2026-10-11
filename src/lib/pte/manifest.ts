@@ -84,6 +84,9 @@ export const allMeta: QuestionMeta[] = (manifestJson as RawRow[]).map((r) => ({
   topic: r.topic,
   source: r.src,
   wordCount: r.wc,
+  sourceClass: sourceClass(r.src),
+  canonicalId: canonicalIdOf(r.id),
+  duplicate: isDuplicateId(r.id),
   ...(r.d ? { difficulty: r.d } : {}),
 }));
 
