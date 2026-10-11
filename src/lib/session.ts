@@ -174,7 +174,7 @@ export function buildQueue(
 ): string[] {
   const now = opts.now ?? Date.now();
   const rand = opts.rand ?? Math.random;
-  const pool = poolFor(opts.taskTypes);
+  const pool = poolFor(opts.taskTypes, opts.verifiedOnly ?? false);
 
   if (opts.mode === "errors") {
     const errs = pool
@@ -315,17 +315,17 @@ function archive(s: SessionState) {
 export function startSession(size: number, stats: Map<string, QuestionStat>, opts?: QueueOptions) {
   const kind: SessionKind = opts?.mode === "errors" ? "errors" : "srs";
   const label = opts?.mode === "errors" ? `Revisar erros (${size})` : `Sessão de ${size}`;
-  begin(buildQueue(stats, size, opts), kind, label);
+  begin(buildQueue(stats, size, { verifiedOnly: currentVerifiedOnly(), ...opts }), kind, label);
 }
 
 export function startMixedSession(counts: MixCounts, stats: Map<string, QuestionStat>) {
   const total = Object.values(counts).reduce((a, b) => a + (b ?? 0), 0);
-  begin(buildMixedQueue(stats, counts), "mixed", `Mista de ${total}`);
+  begin(buildMixedQueue(stats, counts, poolFor(undefined, currentVerifiedOnly())), "mixed", `Mista de ${total}`);
 }
 
 /** Fila do dia: só revisões vencidas, pior último score primeiro. */
 export function startDueSession(size: number, stats: Map<string, QuestionStat>) {
-  begin(buildQueue(stats, size, { mode: "due" }), "due", `Fila do dia (${size})`);
+  begin(buildQueue(stats, size, { mode: "due", verifiedOnly: currentVerifiedOnly() }), "due", `Fila do dia (${size})`);
 }
 
 export function isSessionItem(qid: string): boolean {
