@@ -135,6 +135,11 @@ function slimItem(file, q, defaults) {
   // transcript/audio_text vazios somem; os reais ficam (lst_fib).
   if (out["transcript"] === "") delete out["transcript"];
   if (out["audio_text"] === "") delete out["audio_text"];
+  // prompt padrão do tipo não viaja no JSON (constante no leitor).
+  if (out["prompt"] !== undefined) {
+    const p = norm(out["prompt"]);
+    if (!p || p === norm(modalPrompt.get(file))) delete out["prompt"];
+  }
   return out;
 }
 
