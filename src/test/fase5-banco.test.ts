@@ -195,7 +195,6 @@ describe("Filas respeitam duplicatas e o filtro de fontes (D4/D7)", () => {
 
   it("buildExamQueue com verifiedOnly só amostra fontes verificadas", async () => {
     const { buildExamQueue } = await import("@/lib/pte/exam");
-    const { allMeta } = await import("@/lib/pte");
     const queue = buildExamQueue("listening", () => 0.5, { verifiedOnly: true });
     // Listening NÃO tem fonte verificada: a fila fica vazia em vez de treinar IA
     expect(queue).toHaveLength(0);
