@@ -14,6 +14,43 @@ import {
   type TaskType,
 } from "./types";
 
+// ---------- Proveniência (C2) ----------
+// Fontes com curadoria pública vs. comunidade vs. predições geradas por IA.
+export type SourceClass = "verificada" | "comunitária" | "ia";
+
+const VERIFIED_SOURCES = new Set([
+  "goarno.io",
+  "pteacademy.in",
+  "band9pte.com.au",
+  "stormedugo.com",
+  "edknot.com",
+  "79score.com",
+  "languageacademy.com.au",
+]);
+const AI_SOURCES = new Set(["ai-generated-prediction", "pte2-prediction", "pteracai-seed"]);
+
+export function sourceClass(source: string): SourceClass {
+  if (VERIFIED_SOURCES.has(source)) return "verificada";
+  if (AI_SOURCES.has(source)) return "ia";
+  return "comunitária"; // desconhecida ou anki-cards: nunca tratada como verificada
+}
+
+// ---------- Duplicatas (C3) ----------
+// `canonical-map.json` (gerado por .opencode/proj9-work/dedupe.mjs): qid → id canônico.
+// Duplicatas continuam no banco (selo "repetida") mas saem das filas de treino.
+const CANONICAL_MAP = new Map<string, string>(
+  Object.entries(canonicalMapJson as Record<string, string>),
+);
+
+export function canonicalIdOf(id: string): string {
+  return CANONICAL_MAP.get(id) ?? id;
+}
+
+export function isDuplicateId(id: string): boolean {
+  const c = CANONICAL_MAP.get(id);
+  return c !== undefined && c !== id;
+}
+
 export interface QuestionMeta {
   id: string;
   taskType: TaskType;
@@ -22,6 +59,12 @@ export interface QuestionMeta {
   source: string;
   wordCount: number;
   difficulty?: Difficulty;
+  /** Selo de proveniência (C2). */
+  sourceClass: SourceClass;
+  /** Id canônico do grupo de quase-duplicatas (C3) — o próprio id quando única. */
+  canonicalId: string;
+  /** True quando a questão é quase-duplicata de outra e sai das filas. */
+  duplicate: boolean;
 }
 
 interface RawRow {
