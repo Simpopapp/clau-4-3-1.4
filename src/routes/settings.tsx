@@ -305,8 +305,8 @@ function SettingsPage() {
         <section className="rounded-2xl border border-border bg-card p-5">
           <h2 className="font-medium">Fontes das questões</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            As filas de treino (SRS, plano e simulado) usam só fontes verificadas por padrão; as
-            listas continuam mostrando tudo, sempre com o selo da fonte.
+            Quando ativado, as filas de treino (SRS, plano e simulado) usam só fontes verificadas.
+            As listas continuam mostrando tudo, sempre com o selo da fonte.
           </p>
           <div className="mt-4">
             <Button
