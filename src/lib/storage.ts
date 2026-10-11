@@ -715,10 +715,10 @@ export function migrateLegacyState(parsed: unknown): AppState {
   const attempts = (Array.isArray(obj["attempts"]) ? obj["attempts"] : [])
     .map((a) => normalizeAttempt(a))
     .filter((a): a is Attempt => a !== null);
-  const bookmarks = (Array.isArray(obj["bookmarks"]) ? obj["bookmarks"] : []).filter(
-    (b) => typeof b === "string",
+  const bookmarks = canonicalBookmarks(
+    (Array.isArray(obj["bookmarks"]) ? obj["bookmarks"] : []).filter((b) => typeof b === "string"),
   );
-  const notes = normalizeNotes(obj["notes"]);
+  const notes = canonicalNotes(normalizeNotes(obj["notes"]));
   const sessions = normalizeSessions(obj["sessions"]);
   const draft =
     (v === 3 || v === 4 || v === 5 || v === 6) && obj["draft"] !== undefined
