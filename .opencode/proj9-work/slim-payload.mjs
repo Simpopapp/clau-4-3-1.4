@@ -103,14 +103,8 @@ function slimItem(file, q, defaults) {
     if (eq(q.answer, textOr)) throw new Error(`${file}/${q.id}: answer == text? inesperado`);
   }
 
-  // prompt: sai quando igual ao modal do tipo (ou vazio) — vira constante no leitor.
-  if (q.prompt !== undefined) {
-    const p = norm(q.prompt);
-    if (p && p !== norm(modalPrompt.get(file))) {
-      throw new Error(`${file}/${q.id}: prompt fora do padrão — não remover`);
-    }
-  }
-
+  // prompt: sai quando igual ao modal do tipo (ou vazio) — vira constante no leitor;
+  // variantes fora do padrão permanecem no item (são exibidas como estão).
   for (const k of [
     "id",
     "prompt",
