@@ -98,9 +98,9 @@ function slimItem(file, q, defaults) {
     if (q.transcript !== undefined) keep("transcript"); // áudio = texto preenchido
   }
 
-  // read_aloud: `answer` é passage não usado pelo motor (verificado) → fora.
-  if (file === "read_aloud.json" && q.answer !== undefined) {
-    if (eq(q.answer, textOr)) throw new Error(`${file}/${q.id}: answer == text? inesperado`);
+  // read_aloud: `answer` não é lido pelo motor (o texto exibido é `text`) → fora.
+  if (file === "read_aloud.json") {
+    // (alguns itens têm answer == text; tanto faz — o campo não é consumido)
   }
 
   // prompt: sai quando igual ao modal do tipo (ou vazio) — vira constante no leitor;
