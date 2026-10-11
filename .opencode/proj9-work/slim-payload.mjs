@@ -137,10 +137,12 @@ function slimItem(file, q, defaults) {
   // transcript/audio_text vazios somem; os reais ficam (lst_fib).
   if (out["transcript"] === "") delete out["transcript"];
   if (out["audio_text"] === "") delete out["audio_text"];
-  // prompt padrão do tipo não viaja no JSON (constante no leitor).
+  // prompt padrão do tipo não viaja no JSON (constante no leitor); variantes e
+  // enunciados únicos (essay, lst_summary) ficam no item.
   if (out["prompt"] !== undefined) {
     const p = norm(out["prompt"]);
-    if (!p || p === norm(modalPrompt.get(file))) delete out["prompt"];
+    const isDefault = p === norm(modalPrompt.get(file)) && modalCount.get(file) >= 5;
+    if (!p || (isDefault && file !== "write_essay.json")) delete out["prompt"];
   }
   return out;
 }
