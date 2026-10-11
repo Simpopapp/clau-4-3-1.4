@@ -672,7 +672,8 @@ function normalizeDaily(raw: unknown): Record<string, DailyAggregate> {
  *   inventado) e adota os contadores de due-gating do replay (conservador).
  */
 function recalcSrsSnapshots(app: AppState): AppState {
-  const replayed = replaySnapshots(app.attempts);
+  // Replay sob ids canônicos: pares de quase-duplicatas viram UMA série (C3).
+  const replayed = canonicalizeQuestions(replaySnapshots(app.attempts));
   const questions: Record<string, QuestionSnapshot> = {};
   for (const [qid, snap] of Object.entries(app.questions)) {
     const rep = replayed[qid];
