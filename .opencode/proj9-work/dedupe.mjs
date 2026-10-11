@@ -104,12 +104,22 @@ const union = (a, b) => {
 for (const r of rows) parent.set(r.id, r.id);
 
 const groups = [];
+/** Critério do PRD (C3): mesmo início de ≥ 200 caracteres normalizados = quase-duplicata,
+ *  mesmo que o texto divirja depois (similaridade plena ≥ 0,85 também une). */
+const MIN_COMMON_PREFIX = 200;
+function commonPrefixLen(a, b) {
+  const n = Math.min(a.length, b.length);
+  let i = 0;
+  while (i < n && a[i] === b[i]) i++;
+  return i;
+}
 for (const b of buckets.values()) {
   if (b.length < 2) continue;
   const tri = b.map((r) => trigrams(r.norm));
   for (let i = 0; i < b.length; i++) {
     for (let j = i + 1; j < b.length; j++) {
-      if (b[i].norm === b[j].norm || jaccard(tri[i], tri[j]) >= SIM_THRESHOLD) {
+      const sameStart = commonPrefixLen(b[i].norm, b[j].norm) >= MIN_COMMON_PREFIX;
+      if (sameStart || b[i].norm === b[j].norm || jaccard(tri[i], tri[j]) >= SIM_THRESHOLD) {
         union(b[i].id, b[j].id);
       }
     }
