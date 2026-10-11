@@ -22,8 +22,14 @@ export {
   prevIdInType,
   positionInType,
   firstIdOfType,
+  // Proveniência e quase-duplicatas (Fase 5, C2/C3).
+  sourceClass,
+  canonicalIdOf,
+  isDuplicateId,
+  isSmallBank,
+  SMALL_BANK_MAX,
 } from "./manifest";
-export type { QuestionMeta } from "./manifest";
+export type { QuestionMeta, SourceClass } from "./manifest";
 export {
   ALL_TASK_TYPES,
   getLoadedQuestion,

@@ -65,7 +65,6 @@ function scoredAttempts(app: Pick<AppState, "attempts">): ScoredAttempt[] {
   for (const a of app.attempts) {
     const s = scoreOf(a);
     if (s === null) continue;
-    const source = getMeta(a.qid)?.source ?? "";
     out.push({
       type: a.taskType,
       ts: a.ts,
