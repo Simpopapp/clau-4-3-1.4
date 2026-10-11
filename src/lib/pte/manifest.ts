@@ -4,6 +4,7 @@
 // Gerado por `node scripts/build-manifest.mjs`.
 
 import manifestJson from "@/data/pte/manifest.json";
+import canonicalMapJson from "@/data/pte/canonical-map.json";
 import {
   SECTION_META,
   SECTION_ORDER,
