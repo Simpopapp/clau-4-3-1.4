@@ -50,6 +50,34 @@ export const SECTION_META: Record<Section, SectionMeta> = {
   },
 };
 
+// Instrução padrão por tipo (Fase 5, D2): o JSON guarda uma única cópia quando o
+// texto é igual para todo o tipo; o leitor (catalog.ts) preenche a partir daqui.
+// Derivado do banco por scripts/slim — nunca exibir número fixo daqui.
+export const DEFAULT_PROMPTS: Record<TaskType, string> = {
+  read_aloud:
+    "Look at the text below. In 40 seconds, you must read this text aloud as naturally and clearly as possible.",
+  repeat_sentence: "Listen to the sentence and repeat it exactly.",
+  retell_lecture: "Listen to the lecture and retell it in your own words in 40 seconds.",
+  answer_short: "One word or short phrase. Don't elaborate.",
+  swt: "ONE sentence, 5-75 words. Capture the main claim and the key supporting detail. Use a complex structure (although/while/despite).",
+  write_essay:
+    "In the future, people will work fewer hours than they do today. Do you agree or disagree? Give your opinion with reasons and examples.",
+  reorder_paragraphs: "Reordene os trechos para formar um parágrafo coerente.",
+  read_fib: "Escolha a palavra correta para cada lacuna.",
+  mcq_single: "Read the text and answer the multiple-choice question by selecting one correct response.",
+  mcq_multi:
+    "Read the text and answer the question by selecting all correct responses. More than one is correct.",
+  wfd: "You will hear a sentence. Type the sentence in the box below exactly as you hear it.",
+  lst_fib: "You will hear a recording. Type the missing words in the gaps.",
+  summarize_spoken_text: "Listen to the lecture and write a summary of 50-70 words.",
+  lst_hiw: "",
+  lst_hcs: "",
+  lst_summary: "50-70 words, ~10 minutes. Capture main claim + key tension. Use a complex structure.",
+  lst_smw: "",
+  lst_mcq: "",
+  lst_mcq_multi: "",
+};
+
 export interface TypeMeta {
   label: string;
   section: Section;
